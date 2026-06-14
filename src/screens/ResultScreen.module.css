@@ -1,0 +1,81 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a3a2a;
+}
+
+.card {
+  background: #2a2a3a;
+  border: 3px solid #4a5a6a;
+  border-radius: 20px;
+  padding: 40px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  min-width: 360px;
+}
+
+.winText {
+  font-size: 2rem;
+  color: #e8d44d;
+}
+
+.loseText {
+  font-size: 2rem;
+  color: #d08080;
+}
+
+.scores {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.scoreItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.scoreName {
+  font-size: 1rem;
+  color: #a0c0a0;
+}
+
+.scoreNum {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #f0e6c8;
+}
+
+.vs {
+  font-size: 1.4rem;
+  color: #808080;
+}
+
+.buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.retryBtn {
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  background: #e8d44d;
+  color: #1a1a1a;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.titleBtn {
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  background: #4a5a6a;
+  color: #f0e6c8;
+  border-radius: 8px;
+}

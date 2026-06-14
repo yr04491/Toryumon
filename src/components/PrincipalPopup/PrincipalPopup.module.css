@@ -1,0 +1,87 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.popup {
+  background: #1a1a2a;
+  border: 4px solid #c04040;
+  border-radius: 16px;
+  padding: 28px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 520px;
+  width: 90%;
+}
+
+.principal {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.principalIcon {
+  font-size: 3.5rem;
+  flex-shrink: 0;
+}
+
+.speechBubble {
+  background: #3a1a1a;
+  border: 2px solid #c04040;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #f0a0a0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.teacher {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.teacherImg {
+  height: 80px;
+  object-fit: contain;
+}
+
+.teacherReaction {
+  font-size: 0.9rem;
+  color: #a0a0c0;
+}
+
+.explanation {
+  background: #1a2a1a;
+  border: 2px solid #40a040;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #c0f0c0;
+  font-size: 1rem;
+  width: 100%;
+  line-height: 1.6;
+}
+
+.nextBtn {
+  padding: 12px 40px;
+  font-size: 1.1rem;
+  background: #e8d44d;
+  color: #1a1a1a;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.nextBtn:hover {
+  background: #f0e060;
+}

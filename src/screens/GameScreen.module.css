@@ -1,0 +1,222 @@
+.loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f0e6c8;
+  font-size: 1.4rem;
+  background: #1a3a2a;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #2a2a3a;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  background: #1a1a2a;
+  color: #f0e6c8;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.score {
+  color: #e8d44d;
+  font-weight: bold;
+}
+
+.gameArea {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 16px;
+  gap: 12px;
+}
+
+.blackboardWrap {
+  position: relative;
+  width: 85%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+}
+
+.blackboardBg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.boardText {
+  position: absolute;
+  top: 12%;
+  left: 8%;
+  right: 8%;
+  bottom: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.boardItem {
+  font-size: 1.5rem;
+  color: #e8ffe0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Noto Sans JP', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.boardItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mistakeItem {
+  cursor: pointer;
+}
+
+.teacherWrap {
+  position: absolute;
+  bottom: 8%;
+  right: 6%;
+}
+
+.teacherImg {
+  height: 100%;
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.yamadaWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.yamadaPlaceholder {
+  font-size: 3rem;
+}
+
+.yamadaLabel {
+  font-size: 0.8rem;
+  color: #a0c0a0;
+}
+
+/* オーバーレイ共通 */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.wrongPanel {
+  background: #fff8f0;
+  border: 4px solid #c04040;
+  border-radius: 16px;
+  padding: 28px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.wrongTop {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  width: 100%;
+}
+
+.wrongTeacherImg {
+  height: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.wrongBubble {
+  background: #fff0f0;
+  border: 2px solid #c04040;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #a00000;
+  font-size: 1.2rem;
+  font-weight: bold;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.wrongSub {
+  font-size: 1rem;
+  color: #803030;
+  font-weight: bold;
+}
+
+.yamadaPanel,
+.clearPanel {
+  background: #f0f4ff;
+  border: 3px solid #4040c0;
+  border-radius: 16px;
+  padding: 32px 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.clearPanel {
+  background: #f0fff4;
+  border-color: #40a040;
+}
+
+.yamadaText {
+  font-size: 1.3rem;
+  color: #202080;
+  font-weight: bold;
+}
+
+.yamadaSub {
+  font-size: 1rem;
+  color: #404090;
+}
+
+.clearText {
+  font-size: 1.4rem;
+  color: #206020;
+  font-weight: bold;
+}
+
+.clearSub {
+  font-size: 1rem;
+  color: #408040;
+}
+
+.nextBtn {
+  margin-top: 8px;
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  background: #e8d44d;
+  color: #1a1a1a;
+  border-radius: 8px;
+  font-weight: bold;
+}

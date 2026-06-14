@@ -1,0 +1,12 @@
+{
+  "stages": [
+    {
+      "stageId": "elementary_math_grade3_stage01",
+      "school": "elementary",
+      "grade": 3,
+      "subject": "math",
+      "title": "かけ算の基本",
+      "difficulty": 1
+    }
+  ]
+}

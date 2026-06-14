@@ -1,0 +1,39 @@
+{
+  "stageId": "elementary_math_grade3_stage01",
+  "school": "elementary",
+  "grade": 3,
+  "subject": "math",
+  "teacherId": "teacher_math",
+  "blackboard": [
+    {
+      "id": "item_01",
+      "type": "text",
+      "content": "【かけ算】",
+      "isCorrect": true
+    },
+    {
+      "id": "item_02",
+      "type": "text",
+      "content": "3 × 4 = 12",
+      "isCorrect": true
+    },
+    {
+      "id": "item_03",
+      "type": "text",
+      "content": "5 × 6 = 35",
+      "isCorrect": false,
+      "correctContent": "5 × 6 = 30",
+      "explanation": "5×6は30です。5を6回足すと30になります。"
+    },
+    {
+      "id": "item_04",
+      "type": "text",
+      "content": "7 × 8 = 56",
+      "isCorrect": true
+    }
+  ],
+  "yamada": {
+    "worriedDelay": 5,
+    "answerDelay": 9
+  }
+}
