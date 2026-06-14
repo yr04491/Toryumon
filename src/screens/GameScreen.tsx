@@ -31,12 +31,13 @@ export default function GameScreen({ stage, onFinish }: Props) {
   const [userScore, setUserScore] = useState(0)
   const [yamadaScore, setYamadaScore] = useState(0)
 
-  const yamadaWorryTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const yamadaRaiseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const yamadaNominateTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const yamadaWinTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lessonTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const yamadaActiveRef = useRef(false)
+  // 山田くんのストップウォッチ（経過時間ベース。ポーズ＝tick停止で残り時間を保持）
+  const yamadaTickRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const yamadaElapsedRef = useRef(0)
+  const TICK_MS = 100
+  // ポップアップ中など、授業全体を一時停止するフラグ
+  const pausedRef = useRef(false)
 
   const wrongItem = stageData?.blackboard.find(item => !item.isCorrect) ?? null
 
@@ -69,6 +70,12 @@ export default function GameScreen({ stage, onFinish }: Props) {
     const items = stageData.blackboard
 
     const showNext = () => {
+      // ポーズ中は進めずに足踏み（板書も山田くんも止める）
+      if (pausedRef.current) {
+        lessonTimer.current = setTimeout(showNext, 150)
+        return
+      }
+
       if (index >= items.length) {
         if (!wrongItem) {
           lessonTimer.current = setTimeout(() => {
@@ -82,7 +89,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
       setVisibleItems(prev => [...prev, item])
 
       if (!item.isCorrect) {
-        armYamadaTimers()
+        startYamadaClock()
       }
 
       index++
@@ -94,44 +101,57 @@ export default function GameScreen({ stage, onFinish }: Props) {
     return () => { clearAllTimers() }
   }, [stageData, phase, wrongItem])
 
-  function armYamadaTimers() {
-    if (!stageData) return
-    const { worriedDelay, raiseDelay, nominateDelay } = stageData.yamada
-    yamadaActiveRef.current = true
+  // 最初から（経過時間0）山田くんの時計を回す
+  function startYamadaClock() {
+    yamadaElapsedRef.current = 0
     setYamadaState('normal')
-
-    yamadaWorryTimer.current = setTimeout(() => {
-      if (!yamadaActiveRef.current) return
-      setYamadaState('worried')
-    }, worriedDelay * 1000)
-
-    yamadaRaiseTimer.current = setTimeout(() => {
-      if (!yamadaActiveRef.current) return
-      setYamadaState('raise')
-    }, raiseDelay * 1000)
-
-    yamadaNominateTimer.current = setTimeout(() => {
-      if (!yamadaActiveRef.current) return
-      setTeacherPose('nominate')
-      yamadaWinTimer.current = setTimeout(() => {
-        if (!yamadaActiveRef.current) return
-        setYamadaScore(prev => prev + 1)
-        setYamadaState('hidden')
-        setPhase('yamada_wins')
-      }, 1500)
-    }, nominateDelay * 1000)
+    resumeYamadaClock()
   }
 
-  function clearYamadaTimers() {
-    yamadaActiveRef.current = false
-    if (yamadaWorryTimer.current) clearTimeout(yamadaWorryTimer.current)
-    if (yamadaRaiseTimer.current) clearTimeout(yamadaRaiseTimer.current)
-    if (yamadaNominateTimer.current) clearTimeout(yamadaNominateTimer.current)
-    if (yamadaWinTimer.current) clearTimeout(yamadaWinTimer.current)
+  // 経過時間を保持したまま時計を進める（ポーズからの再開もこれ）
+  function resumeYamadaClock() {
+    if (!stageData) return
+    if (yamadaTickRef.current) return // 二重起動防止
+    const { worriedDelay, raiseDelay, nominateDelay } = stageData.yamada
+    const worriedMs = worriedDelay * 1000
+    const raiseMs = raiseDelay * 1000
+    const nominateMs = nominateDelay * 1000
+    const winMs = nominateMs + 1500
+
+    yamadaTickRef.current = setInterval(() => {
+      yamadaElapsedRef.current += TICK_MS
+      const e = yamadaElapsedRef.current
+
+      // しきい値を超えた瞬間だけ setState（同値なら React が再描画をスキップ）
+      if (e >= winMs) {
+        stopYamadaClock()
+        setYamadaScore(prev => prev + 50)
+        setYamadaState('hidden')
+        setPhase('yamada_wins')
+      } else if (e >= nominateMs) {
+        setTeacherPose('nominate')
+      } else if (e >= raiseMs) {
+        setYamadaState('raise')
+      } else if (e >= worriedMs) {
+        setYamadaState('worried')
+      }
+    }, TICK_MS)
+  }
+
+  // tickだけ止める（経過時間は保持＝再開可能）
+  function pauseYamadaClock() {
+    if (yamadaTickRef.current) {
+      clearInterval(yamadaTickRef.current)
+      yamadaTickRef.current = null
+    }
+  }
+
+  function stopYamadaClock() {
+    pauseYamadaClock()
   }
 
   function clearAllTimers() {
-    clearYamadaTimers()
+    stopYamadaClock()
     if (lessonTimer.current) clearTimeout(lessonTimer.current)
   }
 
@@ -139,13 +159,15 @@ export default function GameScreen({ stage, onFinish }: Props) {
     if (phase !== 'lesson' || showWrongTap) return
 
     if (item.isCorrect) {
-      clearYamadaTimers()
+      pausedRef.current = true
+      pauseYamadaClock()
+      setUserScore(prev => prev - 10)
       setTeacherPose('smug')
       setShowWrongTap(true)
     } else {
       clearAllTimers()
       setTappedItem(item)
-      setUserScore(prev => prev + 1)
+      setUserScore(prev => prev + 50)
       setPhase('correct')
     }
   }
@@ -233,7 +255,8 @@ export default function GameScreen({ stage, onFinish }: Props) {
             <button className={styles.nextBtn} onClick={() => {
               setTeacherPose('normal')
               setShowWrongTap(false)
-              if (wrongItem) armYamadaTimers()
+              pausedRef.current = false
+              if (wrongItem && visibleItems.some(i => i.id === wrongItem.id)) resumeYamadaClock()
             }}>
               授業に戻る
             </button>
@@ -268,7 +291,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
           <div className={styles.clearPanel}>
             <p className={styles.clearText}>よく見てたね！</p>
             <p className={styles.clearSub}>今回の板書に間違いはありませんでした</p>
-            <button className={styles.nextBtn} onClick={() => onFinish({ userScore: userScore + 1, yamadaScore })}>
+            <button className={styles.nextBtn} onClick={() => onFinish({ userScore: userScore + 50, yamadaScore })}>
               次へ
             </button>
           </div>
