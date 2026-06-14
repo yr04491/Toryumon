@@ -14,24 +14,29 @@ type Props = {
 type GamePhase =
   | 'loading'
   | 'lesson'
-  | 'yamada_wins'       // 山田くんに先越された
-  | 'correct'           // 正しく指摘→校長登場
-  | 'no_mistake_clear'  // 間違いなし・正しくスルー
+  | 'yamada_wins'
+  | 'correct'
+  | 'no_mistake_clear'
+
+type TeacherPose = 'normal' | 'smug' | 'nominate'
 
 export default function GameScreen({ stage, onFinish }: Props) {
   const [stageData, setStageData] = useState<StageData | null>(null)
   const [phase, setPhase] = useState<GamePhase>('loading')
-  const [showWrongTap, setShowWrongTap] = useState(false)  // 誤タップオーバーレイ（授業は継続）
+  const [showWrongTap, setShowWrongTap] = useState(false)
   const [visibleItems, setVisibleItems] = useState<BlackboardItem[]>([])
-  const [yamadaState, setYamadaState] = useState<'hidden' | 'worried' | 'raise'>('hidden')
+  const [yamadaState, setYamadaState] = useState<'hidden' | 'normal' | 'worried' | 'raise'>('hidden')
+  const [teacherPose, setTeacherPose] = useState<TeacherPose>('normal')
   const [tappedItem, setTappedItem] = useState<BlackboardItem | null>(null)
   const [userScore, setUserScore] = useState(0)
   const [yamadaScore, setYamadaScore] = useState(0)
 
   const yamadaWorryTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const yamadaAnswerTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const yamadaRaiseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const yamadaNominateTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const yamadaWinTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lessonTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const mistakeAppearedAt = useRef<number | null>(null)
+  const yamadaActiveRef = useRef(false)
 
   const wrongItem = stageData?.blackboard.find(item => !item.isCorrect) ?? null
 
@@ -43,6 +48,10 @@ export default function GameScreen({ stage, onFinish }: Props) {
         `./assets/characters/${tid}_normal.png`,
         `./assets/characters/${tid}_smug.png`,
         `./assets/characters/${tid}_sweat.png`,
+        `./assets/characters/${tid}_nominate.png`,
+        './assets/characters/principal_normal.png',
+        './assets/characters/principal_anger.png',
+        './assets/characters/principal_scolds.png',
         './assets/characters/yamada_normal.png',
         './assets/characters/yamada_worried.png',
         './assets/characters/yamada_raise.png',
@@ -53,7 +62,6 @@ export default function GameScreen({ stage, onFinish }: Props) {
     })
   }, [stage.stageId])
 
-  // 板書を1アイテムずつ順番に表示する
   useEffect(() => {
     if (!stageData || phase !== 'lesson') return
 
@@ -62,7 +70,6 @@ export default function GameScreen({ stage, onFinish }: Props) {
 
     const showNext = () => {
       if (index >= items.length) {
-        // 全アイテム表示後、間違いなしなら一定時間後にクリア
         if (!wrongItem) {
           lessonTimer.current = setTimeout(() => {
             setPhase('no_mistake_clear')
@@ -74,20 +81,8 @@ export default function GameScreen({ stage, onFinish }: Props) {
       const item = items[index]
       setVisibleItems(prev => [...prev, item])
 
-      // 間違いアイテムが表示されたらタイマー開始
       if (!item.isCorrect) {
-        mistakeAppearedAt.current = Date.now()
-        const { worriedDelay, answerDelay } = stageData.yamada
-
-        yamadaWorryTimer.current = setTimeout(() => {
-          setYamadaState('worried')
-        }, worriedDelay * 1000)
-
-        yamadaAnswerTimer.current = setTimeout(() => {
-          setYamadaState('raise')
-          setYamadaScore(prev => prev + 1)
-          setPhase('yamada_wins')
-        }, answerDelay * 1000)
+        armYamadaTimers()
       }
 
       index++
@@ -96,14 +91,47 @@ export default function GameScreen({ stage, onFinish }: Props) {
 
     lessonTimer.current = setTimeout(showNext, 800)
 
-    return () => {
-      clearAllTimers()
-    }
+    return () => { clearAllTimers() }
   }, [stageData, phase, wrongItem])
 
-  function clearAllTimers() {
+  function armYamadaTimers() {
+    if (!stageData) return
+    const { worriedDelay, raiseDelay, nominateDelay } = stageData.yamada
+    yamadaActiveRef.current = true
+    setYamadaState('normal')
+
+    yamadaWorryTimer.current = setTimeout(() => {
+      if (!yamadaActiveRef.current) return
+      setYamadaState('worried')
+    }, worriedDelay * 1000)
+
+    yamadaRaiseTimer.current = setTimeout(() => {
+      if (!yamadaActiveRef.current) return
+      setYamadaState('raise')
+    }, raiseDelay * 1000)
+
+    yamadaNominateTimer.current = setTimeout(() => {
+      if (!yamadaActiveRef.current) return
+      setTeacherPose('nominate')
+      yamadaWinTimer.current = setTimeout(() => {
+        if (!yamadaActiveRef.current) return
+        setYamadaScore(prev => prev + 1)
+        setYamadaState('hidden')
+        setPhase('yamada_wins')
+      }, 1500)
+    }, nominateDelay * 1000)
+  }
+
+  function clearYamadaTimers() {
+    yamadaActiveRef.current = false
     if (yamadaWorryTimer.current) clearTimeout(yamadaWorryTimer.current)
-    if (yamadaAnswerTimer.current) clearTimeout(yamadaAnswerTimer.current)
+    if (yamadaRaiseTimer.current) clearTimeout(yamadaRaiseTimer.current)
+    if (yamadaNominateTimer.current) clearTimeout(yamadaNominateTimer.current)
+    if (yamadaWinTimer.current) clearTimeout(yamadaWinTimer.current)
+  }
+
+  function clearAllTimers() {
+    clearYamadaTimers()
     if (lessonTimer.current) clearTimeout(lessonTimer.current)
   }
 
@@ -111,10 +139,10 @@ export default function GameScreen({ stage, onFinish }: Props) {
     if (phase !== 'lesson' || showWrongTap) return
 
     if (item.isCorrect) {
-      // 誤タップ：タイマーはそのまま、オーバーレイだけ表示
+      clearYamadaTimers()
+      setTeacherPose('smug')
       setShowWrongTap(true)
     } else {
-      // 正しく指摘
       clearAllTimers()
       setTappedItem(item)
       setUserScore(prev => prev + 1)
@@ -130,6 +158,12 @@ export default function GameScreen({ stage, onFinish }: Props) {
     return <div className={styles.loading}>読み込み中...</div>
   }
 
+  const teacherSrc = () => {
+    if (teacherPose === 'smug') return `./assets/characters/${stageData.teacherId}_smug.png`
+    if (teacherPose === 'nominate') return `./assets/characters/${stageData.teacherId}_nominate.png`
+    return `./assets/characters/${stageData.teacherId}_normal.png`
+  }
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -141,11 +175,9 @@ export default function GameScreen({ stage, onFinish }: Props) {
       </header>
 
       <div className={styles.gameArea}>
-        {/* 黒板 */}
         <div className={styles.blackboardWrap}>
           <img src="./blackboard.png" alt="黒板" className={styles.blackboardBg} />
 
-          {/* 板書テキスト */}
           <div className={styles.boardText}>
             {visibleItems.map(item => (
               <div
@@ -158,28 +190,24 @@ export default function GameScreen({ stage, onFinish }: Props) {
             ))}
           </div>
 
-          {/* 先生（黒板上に重ねて表示） */}
           <div className={styles.teacherWrap}>
             <img
-              src={
-                showWrongTap
-                  ? `./assets/characters/${stageData.teacherId}_smug.png`
-                  : `./assets/characters/${stageData.teacherId}_normal.png`
-              }
+              src={teacherSrc()}
               alt="先生"
               className={styles.teacherImg}
             />
           </div>
         </div>
 
-        {/* 山田くん（間違い発生時のみ表示） */}
         {yamadaState !== 'hidden' && (
           <div className={styles.yamadaWrap}>
             <img
               src={
-                yamadaState === 'worried'
+                yamadaState === 'raise'
+                  ? './assets/characters/yamada_raise.png'
+                  : yamadaState === 'worried'
                   ? './assets/characters/yamada_worried.png'
-                  : './assets/characters/yamada_raise.png'
+                  : './assets/characters/yamada_normal.png'
               }
               alt="山田くん"
               className={styles.yamadaImg}
@@ -188,7 +216,6 @@ export default function GameScreen({ stage, onFinish }: Props) {
         )}
       </div>
 
-      {/* 誤タップ演出（授業は裏で継続中） */}
       {showWrongTap && (
         <div className={styles.overlay}>
           <div className={styles.wrongPanel}>
@@ -203,14 +230,17 @@ export default function GameScreen({ stage, onFinish }: Props) {
               </div>
             </div>
             <p className={styles.wrongSub}>先生に笑われた…</p>
-            <button className={styles.nextBtn} onClick={() => setShowWrongTap(false)}>
+            <button className={styles.nextBtn} onClick={() => {
+              setTeacherPose('normal')
+              setShowWrongTap(false)
+              if (wrongItem) armYamadaTimers()
+            }}>
               授業に戻る
             </button>
           </div>
         </div>
       )}
 
-      {/* 山田くんに先越された演出 */}
       {phase === 'yamada_wins' && (
         <div className={styles.overlay}>
           <div className={styles.yamadaPanel}>
@@ -233,7 +263,6 @@ export default function GameScreen({ stage, onFinish }: Props) {
         </div>
       )}
 
-      {/* 間違いなし・正しくスルー */}
       {phase === 'no_mistake_clear' && (
         <div className={styles.overlay}>
           <div className={styles.clearPanel}>
@@ -246,7 +275,6 @@ export default function GameScreen({ stage, onFinish }: Props) {
         </div>
       )}
 
-      {/* 正しく指摘→校長フェーズ */}
       {phase === 'correct' && tappedItem && (
         <PrincipalPopup
           explanation={tappedItem.explanation ?? ''}

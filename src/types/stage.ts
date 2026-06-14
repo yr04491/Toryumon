@@ -16,7 +16,8 @@ export type StageData = {
   blackboard: BlackboardItem[]
   yamada: {
     worriedDelay: number
-    answerDelay: number
+    raiseDelay: number
+    nominateDelay: number
   }
 }
 

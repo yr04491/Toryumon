@@ -11,7 +11,11 @@ export default function PrincipalPopup({ explanation, teacherId, onClose }: Prop
     <div className={styles.overlay}>
       <div className={styles.popup}>
         <div className={styles.principal}>
-          <span className={styles.principalIcon}>👴</span>
+          <img
+            src="./assets/characters/principal_scolds.png"
+            alt="校長"
+            className={styles.principalImg}
+          />
           <div className={styles.speechBubble}>
             <p>「こらーっ！何をやっとるんじゃ！！」</p>
           </div>

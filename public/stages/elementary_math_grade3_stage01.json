@@ -33,7 +33,8 @@
     }
   ],
   "yamada": {
-    "worriedDelay": 5,
-    "answerDelay": 9
+    "worriedDelay": 3,
+    "raiseDelay": 7,
+    "nominateDelay": 10
   }
 }

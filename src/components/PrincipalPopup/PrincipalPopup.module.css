@@ -28,8 +28,9 @@
   width: 100%;
 }
 
-.principalIcon {
-  font-size: 3.5rem;
+.principalImg {
+  height: 160px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
