@@ -14,14 +14,14 @@ type Props = {
 type GamePhase =
   | 'loading'
   | 'lesson'
-  | 'wrong_tap'      // 誤タップ：先生に馬鹿にされる
-  | 'yamada_wins'    // 山田くんに先越された
-  | 'correct'        // 正しく指摘→校長登場
-  | 'no_mistake_clear' // 間違いなし・正しくスルー
+  | 'yamada_wins'       // 山田くんに先越された
+  | 'correct'           // 正しく指摘→校長登場
+  | 'no_mistake_clear'  // 間違いなし・正しくスルー
 
 export default function GameScreen({ stage, onFinish }: Props) {
   const [stageData, setStageData] = useState<StageData | null>(null)
   const [phase, setPhase] = useState<GamePhase>('loading')
+  const [showWrongTap, setShowWrongTap] = useState(false)  // 誤タップオーバーレイ（授業は継続）
   const [visibleItems, setVisibleItems] = useState<BlackboardItem[]>([])
   const [yamadaState, setYamadaState] = useState<'hidden' | 'worried' | 'raise'>('hidden')
   const [tappedItem, setTappedItem] = useState<BlackboardItem | null>(null)
@@ -43,6 +43,10 @@ export default function GameScreen({ stage, onFinish }: Props) {
         `./assets/characters/${tid}_normal.png`,
         `./assets/characters/${tid}_smug.png`,
         `./assets/characters/${tid}_sweat.png`,
+        './assets/characters/yamada_normal.png',
+        './assets/characters/yamada_worried.png',
+        './assets/characters/yamada_raise.png',
+        './assets/characters/yamada_win.png',
       ])
       setStageData(data)
       setPhase('lesson')
@@ -104,16 +108,15 @@ export default function GameScreen({ stage, onFinish }: Props) {
   }
 
   function handleTap(item: BlackboardItem) {
-    if (phase !== 'lesson') return
-
-    clearAllTimers()
-    setTappedItem(item)
+    if (phase !== 'lesson' || showWrongTap) return
 
     if (item.isCorrect) {
-      // 正しい箇所をタップ→誤報告
-      setPhase('wrong_tap')
+      // 誤タップ：タイマーはそのまま、オーバーレイだけ表示
+      setShowWrongTap(true)
     } else {
-      // 間違い箇所を正しくタップ
+      // 正しく指摘
+      clearAllTimers()
+      setTappedItem(item)
       setUserScore(prev => prev + 1)
       setPhase('correct')
     }
@@ -159,7 +162,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
           <div className={styles.teacherWrap}>
             <img
               src={
-                phase === 'wrong_tap'
+                showWrongTap
                   ? `./assets/characters/${stageData.teacherId}_smug.png`
                   : `./assets/characters/${stageData.teacherId}_normal.png`
               }
@@ -172,16 +175,21 @@ export default function GameScreen({ stage, onFinish }: Props) {
         {/* 山田くん（間違い発生時のみ表示） */}
         {yamadaState !== 'hidden' && (
           <div className={styles.yamadaWrap}>
-            <div className={styles.yamadaPlaceholder}>
-              {yamadaState === 'worried' ? '🤔' : '🙋'}
-            </div>
-            <span className={styles.yamadaLabel}>山田くん</span>
+            <img
+              src={
+                yamadaState === 'worried'
+                  ? './assets/characters/yamada_worried.png'
+                  : './assets/characters/yamada_raise.png'
+              }
+              alt="山田くん"
+              className={styles.yamadaImg}
+            />
           </div>
         )}
       </div>
 
-      {/* 誤タップ演出 */}
-      {phase === 'wrong_tap' && (
+      {/* 誤タップ演出（授業は裏で継続中） */}
+      {showWrongTap && (
         <div className={styles.overlay}>
           <div className={styles.wrongPanel}>
             <div className={styles.wrongTop}>
@@ -195,7 +203,9 @@ export default function GameScreen({ stage, onFinish }: Props) {
               </div>
             </div>
             <p className={styles.wrongSub}>先生に笑われた…</p>
-            <button className={styles.nextBtn} onClick={handlePopupClose}>次へ</button>
+            <button className={styles.nextBtn} onClick={() => setShowWrongTap(false)}>
+              授業に戻る
+            </button>
           </div>
         </div>
       )}
@@ -204,6 +214,16 @@ export default function GameScreen({ stage, onFinish }: Props) {
       {phase === 'yamada_wins' && (
         <div className={styles.overlay}>
           <div className={styles.yamadaPanel}>
+            <div className={styles.yamadaTop}>
+              <img
+                src="./assets/characters/yamada_win.png"
+                alt="山田くん"
+                className={styles.yamadaWinImg}
+              />
+              <div className={styles.yamadaWinBubble}>
+                「先生！そこ間違ってます！」
+              </div>
+            </div>
             <p className={styles.yamadaText}>山田くんに先を越された！</p>
             <p className={styles.yamadaSub}>
               {wrongItem && `正しくは「${wrongItem.correctContent}」でした`}

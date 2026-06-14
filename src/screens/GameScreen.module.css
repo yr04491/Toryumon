@@ -108,13 +108,9 @@
   gap: 4px;
 }
 
-.yamadaPlaceholder {
-  font-size: 3rem;
-}
-
-.yamadaLabel {
-  font-size: 0.8rem;
-  color: #a0c0a0;
+.yamadaImg {
+  height: 120px;
+  object-fit: contain;
 }
 
 /* オーバーレイ共通 */
@@ -169,6 +165,31 @@
   font-size: 1rem;
   color: #803030;
   font-weight: bold;
+}
+
+.yamadaTop {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  width: 100%;
+}
+
+.yamadaWinImg {
+  height: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.yamadaWinBubble {
+  background: #e8eeff;
+  border: 2px solid #4040c0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #202080;
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1.6;
+  flex: 1;
 }
 
 .yamadaPanel,
