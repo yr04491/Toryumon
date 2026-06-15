@@ -25,7 +25,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
   const [phase, setPhase] = useState<GamePhase>('loading')
   const [showWrongTap, setShowWrongTap] = useState(false)
   const [visibleItems, setVisibleItems] = useState<BlackboardItem[]>([])
-  const [yamadaState, setYamadaState] = useState<'hidden' | 'normal' | 'worried' | 'raise'>('hidden')
+  const [yamadaState, setYamadaState] = useState<'normal' | 'worried' | 'raise'>('normal')
   const [teacherPose, setTeacherPose] = useState<TeacherPose>('normal')
   const [tappedItem, setTappedItem] = useState<BlackboardItem | null>(null)
   const [userScore, setUserScore] = useState(0)
@@ -40,6 +40,26 @@ export default function GameScreen({ stage, onFinish }: Props) {
   const pausedRef = useRef(false)
 
   const wrongItem = stageData?.blackboard.find(item => !item.isCorrect) ?? null
+
+  // オーバーレイと同じ条件(縦画面)でゲームをポーズ/再開
+  useEffect(() => {
+    const mq = window.matchMedia('(orientation: portrait)')
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        pausedRef.current = true
+        pauseYamadaClock()
+      } else {
+        pausedRef.current = false
+        if (wrongItem && visibleItems.some(i => i.id === wrongItem.id)) {
+          resumeYamadaClock()
+        }
+      }
+    }
+
+    mq.addEventListener('change', handleChange)
+    return () => mq.removeEventListener('change', handleChange)
+  }, [wrongItem, visibleItems])
 
   useEffect(() => {
     loadStage(stage.stageId).then(async data => {
@@ -126,7 +146,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
       if (e >= winMs) {
         stopYamadaClock()
         setYamadaScore(prev => prev + 50)
-        setYamadaState('hidden')
+        setYamadaState('normal')
         setPhase('yamada_wins')
       } else if (e >= nominateMs) {
         setTeacherPose('nominate')
@@ -197,32 +217,32 @@ export default function GameScreen({ stage, onFinish }: Props) {
       </header>
 
       <div className={styles.gameArea}>
-        <div className={styles.blackboardWrap}>
-          <img src="./blackboard.png" alt="黒板" className={styles.blackboardBg} />
+        <div className={styles.stageLayout}>
+          <div className={styles.blackboardWrap}>
+            <img src="./blackboard.png" alt="黒板" className={styles.blackboardBg} />
 
-          <div className={styles.boardText}>
-            {visibleItems.map(item => (
-              <div
-                key={item.id}
-                className={`${styles.boardItem} ${!item.isCorrect ? styles.mistakeItem : ''}`}
-                onClick={() => handleTap(item)}
-              >
-                {item.content}
-              </div>
-            ))}
+            <div className={styles.boardText}>
+              {visibleItems.map(item => (
+                <div
+                  key={item.id}
+                  className={`${styles.boardItem} ${!item.isCorrect ? styles.mistakeItem : ''}`}
+                  onClick={() => handleTap(item)}
+                >
+                  {item.content}
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.teacherWrap} style={{ visibility: phase === 'correct' ? 'hidden' : 'visible' }}>
+              <img
+                src={teacherSrc()}
+                alt="先生"
+                className={styles.teacherImg}
+              />
+            </div>
           </div>
 
-          <div className={styles.teacherWrap}>
-            <img
-              src={teacherSrc()}
-              alt="先生"
-              className={styles.teacherImg}
-            />
-          </div>
-        </div>
-
-        {yamadaState !== 'hidden' && (
-          <div className={styles.yamadaWrap}>
+          <div className={styles.yamadaWrap} style={{ visibility: phase === 'yamada_wins' ? 'hidden' : 'visible' }}>
             <img
               src={
                 yamadaState === 'raise'
@@ -235,7 +255,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
               className={styles.yamadaImg}
             />
           </div>
-        )}
+        </div>
       </div>
 
       {showWrongTap && (

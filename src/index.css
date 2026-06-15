@@ -17,3 +17,51 @@ button {
   border: none;
   outline: none;
 }
+
+/* 縦画面のとき「横にしてね」オーバーレイを全面表示 */
+.rotateNotice {
+  display: none;
+}
+
+@media (orientation: portrait) {
+  .rotateNotice {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: #1a1a2e;
+    color: #f0e6c8;
+    text-align: center;
+    padding: 32px;
+  }
+
+  /* 縦のときは背後のゲームを止めて見せない */
+  #root {
+    visibility: hidden;
+  }
+}
+
+.rotateIcon {
+  font-size: 5rem;
+  animation: rotateHint 2s ease-in-out infinite;
+}
+
+.rotateText {
+  font-size: 1.3rem;
+  font-weight: bold;
+  line-height: 1.6;
+}
+
+.rotateSub {
+  font-size: 0.95rem;
+  color: #a0a0c0;
+}
+
+@keyframes rotateHint {
+  0%, 40% { transform: rotate(0deg); }
+  60%, 100% { transform: rotate(-90deg); }
+}
