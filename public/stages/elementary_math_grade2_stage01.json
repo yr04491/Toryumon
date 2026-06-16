@@ -1,0 +1,40 @@
+{
+  "stageId": "elementary_math_grade2_stage01",
+  "school": "elementary",
+  "grade": 2,
+  "subject": "math",
+  "teacherId": "teacher_math",
+  "blackboard": [
+    {
+      "id": "item_01",
+      "type": "label",
+      "content": "【たし算（大きい数）】",
+      "isCorrect": true
+    },
+    {
+      "id": "item_02",
+      "type": "text",
+      "content": "11 + 5 = 16",
+      "isCorrect": true
+    },
+    {
+      "id": "item_03",
+      "type": "text",
+      "content": "13 + 4 = 18",
+      "isCorrect": false,
+      "correctContent": "13 + 4 = 17",
+      "explanation": "13+4は17です。13に4をたすと17になります。"
+    },
+    {
+      "id": "item_04",
+      "type": "text",
+      "content": "12 + 6 = 18",
+      "isCorrect": true
+    }
+  ],
+  "yamada": {
+    "worriedDelay": 3,
+    "raiseDelay": 7,
+    "nominateDelay": 10
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "stageId": "elementary_math_grade1_stage03",
+  "school": "elementary",
+  "grade": 1,
+  "subject": "math",
+  "teacherId": "teacher_math",
+  "blackboard": [
+    {
+      "id": "item_01",
+      "type": "label",
+      "content": "【たし算】",
+      "isCorrect": true
+    },
+    {
+      "id": "item_02",
+      "type": "text",
+      "content": "1 + 1 = 2",
+      "isCorrect": true
+    },
+    {
+      "id": "item_03",
+      "type": "text",
+      "content": "3 + 5 = 8",
+      "isCorrect": true
+    },
+    {
+      "id": "item_04",
+      "type": "text",
+      "content": "2 + 6 = 8",
+      "isCorrect": true
+    }
+  ],
+  "yamada": {
+    "worriedDelay": 3,
+    "raiseDelay": 7,
+    "nominateDelay": 10
+  }
+}

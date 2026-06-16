@@ -101,9 +101,17 @@ export default function GameScreen({ stage, onFinish }: Props) {
 
       if (index >= items.length) {
         if (!wrongItem) {
+          const { worriedDelay, raiseDelay, nominateDelay } = stageData.yamada
           lessonTimer.current = setTimeout(() => {
-            setPhase('no_mistake_clear')
-          }, 5000)
+            setYamadaState('worried')
+            lessonTimer.current = setTimeout(() => {
+              setYamadaState('raise')
+              lessonTimer.current = setTimeout(() => {
+                setYamadaState('normal')
+                setPhase('no_mistake_clear')
+              }, (nominateDelay - raiseDelay) * 1000)
+            }, (raiseDelay - worriedDelay) * 1000)
+          }, worriedDelay * 1000)
         }
         return
       }
@@ -152,7 +160,14 @@ export default function GameScreen({ stage, onFinish }: Props) {
         setYamadaState('normal')
         setPhase('yamada_wins')
       } else if (e >= nominateMs) {
-        setTeacherPose('nominate')
+        const hasWrongItem = stageData.blackboard.some(item => !item.isCorrect)
+        if (!hasWrongItem) {
+          stopYamadaClock()
+          setYamadaState('normal')
+          setPhase('no_mistake_clear')
+        } else {
+          setTeacherPose('nominate')
+        }
       } else if (e >= raiseMs) {
         setYamadaState('raise')
       } else if (e >= worriedMs) {

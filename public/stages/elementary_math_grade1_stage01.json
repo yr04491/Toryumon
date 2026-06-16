@@ -1,0 +1,40 @@
+{
+  "stageId": "elementary_math_grade1_stage01",
+  "school": "elementary",
+  "grade": 1,
+  "subject": "math",
+  "teacherId": "teacher_math",
+  "blackboard": [
+    {
+      "id": "item_01",
+      "type": "label",
+      "content": "【たし算】",
+      "isCorrect": true
+    },
+    {
+      "id": "item_02",
+      "type": "text",
+      "content": "2 + 3 = 5",
+      "isCorrect": true
+    },
+    {
+      "id": "item_03",
+      "type": "text",
+      "content": "4 + 4 = 7",
+      "isCorrect": false,
+      "correctContent": "4 + 4 = 8",
+      "explanation": "4+4は8です。4を2回たすと8になります。"
+    },
+    {
+      "id": "item_04",
+      "type": "text",
+      "content": "6 + 1 = 7",
+      "isCorrect": true
+    }
+  ],
+  "yamada": {
+    "worriedDelay": 3,
+    "raiseDelay": 7,
+    "nominateDelay": 10
+  }
+}

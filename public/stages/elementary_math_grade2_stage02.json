@@ -1,0 +1,40 @@
+{
+  "stageId": "elementary_math_grade2_stage02",
+  "school": "elementary",
+  "grade": 2,
+  "subject": "math",
+  "teacherId": "teacher_math",
+  "blackboard": [
+    {
+      "id": "item_01",
+      "type": "label",
+      "content": "【かけ算】",
+      "isCorrect": true
+    },
+    {
+      "id": "item_02",
+      "type": "text",
+      "content": "2 × 3 = 6",
+      "isCorrect": true
+    },
+    {
+      "id": "item_03",
+      "type": "text",
+      "content": "3 × 4 = 11",
+      "isCorrect": false,
+      "correctContent": "3 × 4 = 12",
+      "explanation": "3×4は12です。3を4回たすと12になります。"
+    },
+    {
+      "id": "item_04",
+      "type": "text",
+      "content": "4 × 2 = 8",
+      "isCorrect": true
+    }
+  ],
+  "yamada": {
+    "worriedDelay": 3,
+    "raiseDelay": 7,
+    "nominateDelay": 10
+  }
+}

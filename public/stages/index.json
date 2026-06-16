@@ -1,6 +1,46 @@
 {
   "stages": [
     {
+      "stageId": "elementary_math_grade1_stage01",
+      "school": "elementary",
+      "grade": 1,
+      "subject": "math",
+      "title": "たし算の基本",
+      "difficulty": 1
+    },
+    {
+      "stageId": "elementary_math_grade1_stage02",
+      "school": "elementary",
+      "grade": 1,
+      "subject": "math",
+      "title": "ひき算の基本",
+      "difficulty": 1
+    },
+    {
+      "stageId": "elementary_math_grade1_stage03",
+      "school": "elementary",
+      "grade": 1,
+      "subject": "math",
+      "title": "たし算の練習",
+      "difficulty": 1
+    },
+    {
+      "stageId": "elementary_math_grade2_stage01",
+      "school": "elementary",
+      "grade": 2,
+      "subject": "math",
+      "title": "たし算（大きい数）",
+      "difficulty": 1
+    },
+    {
+      "stageId": "elementary_math_grade2_stage02",
+      "school": "elementary",
+      "grade": 2,
+      "subject": "math",
+      "title": "かけ算入門",
+      "difficulty": 1
+    },
+    {
       "stageId": "elementary_math_grade3_stage01",
       "school": "elementary",
       "grade": 3,
