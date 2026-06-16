@@ -95,6 +95,16 @@
   cursor: pointer;
 }
 
+.labelItem {
+  cursor: default;
+  font-weight: bold;
+  opacity: 0.9;
+}
+
+.labelItem:hover {
+  background: transparent;
+}
+
 .teacherWrap {
   position: absolute;
   bottom: 0;
@@ -185,6 +195,7 @@
   flex: 1;
   min-width: 0;
   word-break: break-word;
+  align-self: center;
 }
 
 .wrongSub {
@@ -218,6 +229,7 @@
   flex: 1;
   min-width: 0;
   word-break: break-word;
+  align-self: center;
 }
 
 .yamadaPanel {
@@ -368,6 +380,7 @@
   flex: 1;
   min-width: 0;
   word-break: break-word;
+  align-self: center;
 }
 
 .nextBtn {

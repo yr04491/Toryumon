@@ -220,10 +220,12 @@ export default function GameScreen({ stage, onFinish }: Props) {
               {visibleItems.map(item => (
                 <div
                   key={item.id}
-                  className={`${styles.boardItem} ${!item.isCorrect ? styles.mistakeItem : ''}`}
-                  onClick={() => handleTap(item)}
+                  className={`${styles.boardItem} ${item.type === 'label' ? styles.labelItem : ''} ${!item.isCorrect ? styles.mistakeItem : ''}`}
+                  onClick={() => item.type !== 'label' && handleTap(item)}
                 >
-                  {item.content}
+                  {item.content.split('\n').map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
                 </div>
               ))}
             </div>
@@ -348,9 +350,12 @@ export default function GameScreen({ stage, onFinish }: Props) {
                 「先生！そこ間違ってます！」
               </div>
             </div>
-            <p className={styles.yamadaSub}>
-              {wrongItem && `正しくは「${wrongItem.correctContent}」でした`}
-            </p>
+            {wrongItem && (
+              <>
+                <p className={styles.yamadaSub}>間違えているのは「{wrongItem.content}」</p>
+                <p className={styles.yamadaSub}>正しくは「{wrongItem.correctContent}」です</p>
+              </>
+            )}
             <button className={styles.nextBtn} onClick={handlePopupClose}>次へ</button>
           </div>
         </div>

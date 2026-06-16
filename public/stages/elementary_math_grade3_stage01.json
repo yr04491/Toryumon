@@ -7,7 +7,7 @@
   "blackboard": [
     {
       "id": "item_01",
-      "type": "text",
+      "type": "label",
       "content": "【かけ算】",
       "isCorrect": true
     },

@@ -1,6 +1,6 @@
 export type BlackboardItem = {
   id: string
-  type: 'text'
+  type: 'text' | 'label'
   content: string
   isCorrect: boolean
   correctContent?: string
