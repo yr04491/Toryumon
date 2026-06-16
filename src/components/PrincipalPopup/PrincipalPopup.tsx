@@ -10,6 +10,7 @@ export default function PrincipalPopup({ explanation, teacherId, onClose }: Prop
   return (
     <div className={styles.overlay}>
       <div className={styles.popup}>
+        <p className={styles.header}>先生の間違いを指摘した！</p>
         <div className={styles.principal}>
           <img
             src="./assets/characters/principal_scolds.png"

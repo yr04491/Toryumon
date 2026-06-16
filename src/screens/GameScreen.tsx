@@ -18,11 +18,14 @@ type GamePhase =
   | 'correct'
   | 'no_mistake_clear'
 
+type ReportingPhase = 'none' | 'reporting' | 'principal_angry'
+
 type TeacherPose = 'normal' | 'smug' | 'nominate'
 
 export default function GameScreen({ stage, onFinish }: Props) {
   const [stageData, setStageData] = useState<StageData | null>(null)
   const [phase, setPhase] = useState<GamePhase>('loading')
+  const [reportingPhase, setReportingPhase] = useState<ReportingPhase>('none')
   const [showWrongTap, setShowWrongTap] = useState(false)
   const [visibleItems, setVisibleItems] = useState<BlackboardItem[]>([])
   const [yamadaState, setYamadaState] = useState<'normal' | 'worried' | 'raise'>('normal')
@@ -176,20 +179,12 @@ export default function GameScreen({ stage, onFinish }: Props) {
   }
 
   function handleTap(item: BlackboardItem) {
-    if (phase !== 'lesson' || showWrongTap) return
+    if (phase !== 'lesson' || showWrongTap || reportingPhase !== 'none') return
 
-    if (item.isCorrect) {
-      pausedRef.current = true
-      pauseYamadaClock()
-      setUserScore(prev => prev - 10)
-      setTeacherPose('smug')
-      setShowWrongTap(true)
-    } else {
-      clearAllTimers()
-      setTappedItem(item)
-      setUserScore(prev => prev + 50)
-      setPhase('correct')
-    }
+    pausedRef.current = true
+    pauseYamadaClock()
+    setTappedItem(item)
+    setReportingPhase('reporting')
   }
 
   function handlePopupClose() {
@@ -258,9 +253,64 @@ export default function GameScreen({ stage, onFinish }: Props) {
         </div>
       </div>
 
+      {reportingPhase === 'reporting' && tappedItem && (
+        <div className={styles.overlay}>
+          <div className={styles.reportingPanel}>
+            <p className={styles.popupHeader}>校長に報告する？</p>
+            <p className={styles.reportingText}>「{tappedItem.content}」が間違いだと報告しますか？</p>
+            <div className={styles.reportingBtns}>
+              <button className={styles.reportBtn} onClick={() => setReportingPhase('principal_angry')}>
+                報告する
+              </button>
+              <button className={styles.cancelBtn} onClick={() => {
+                setTappedItem(null)
+                setReportingPhase('none')
+                pausedRef.current = false
+                if (wrongItem && visibleItems.some(i => i.id === wrongItem.id)) resumeYamadaClock()
+              }}>
+                やめる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {reportingPhase === 'principal_angry' && (
+        <div className={styles.overlay}>
+          <div className={styles.principalAngryPanel}>
+            <p className={styles.popupHeader}>校長に報告した！</p>
+            <div className={styles.principalAngryTop}>
+              <img
+                src="./assets/characters/principal_anger.png"
+                alt="校長"
+                className={styles.principalAngryImg}
+              />
+              <div className={styles.principalAngryBubble}>
+                「なにーーー！」
+              </div>
+            </div>
+            <button className={styles.nextBtn} onClick={() => {
+              setReportingPhase('none')
+              if (tappedItem && !tappedItem.isCorrect) {
+                clearAllTimers()
+                setUserScore(prev => prev + 50)
+                setPhase('correct')
+              } else {
+                setUserScore(prev => prev - 10)
+                setTeacherPose('smug')
+                setShowWrongTap(true)
+              }
+            }}>
+              次へ
+            </button>
+          </div>
+        </div>
+      )}
+
       {showWrongTap && (
         <div className={styles.overlay}>
           <div className={styles.wrongPanel}>
+            <p className={styles.popupHeader}>間違っていなかった...</p>
             <div className={styles.wrongTop}>
               <img
                 src={`./assets/characters/${stageData.teacherId}_smug.png`}
@@ -287,6 +337,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
       {phase === 'yamada_wins' && (
         <div className={styles.overlay}>
           <div className={styles.yamadaPanel}>
+            <p className={styles.popupHeader}>山田くんに先を越された！</p>
             <div className={styles.yamadaTop}>
               <img
                 src="./assets/characters/yamada_win.png"
@@ -297,7 +348,6 @@ export default function GameScreen({ stage, onFinish }: Props) {
                 「先生！そこ間違ってます！」
               </div>
             </div>
-            <p className={styles.yamadaText}>山田くんに先を越された！</p>
             <p className={styles.yamadaSub}>
               {wrongItem && `正しくは「${wrongItem.correctContent}」でした`}
             </p>
@@ -309,7 +359,7 @@ export default function GameScreen({ stage, onFinish }: Props) {
       {phase === 'no_mistake_clear' && (
         <div className={styles.overlay}>
           <div className={styles.clearPanel}>
-            <p className={styles.clearText}>よく見てたね！</p>
+            <p className={styles.popupHeader}>ミスはなかった！すごいね！</p>
             <p className={styles.clearSub}>今回の板書に間違いはありませんでした</p>
             <button className={styles.nextBtn} onClick={() => onFinish({ userScore: userScore + 50, yamadaScore })}>
               次へ
