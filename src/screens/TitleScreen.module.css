@@ -1,36 +1,78 @@
 .container {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #1a3a2a;
-  gap: 24px;
+  gap: 20px;
+  background-image: url('./blackboard.png');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
 
 .title {
-  font-size: 2.4rem;
-  color: #f0e6c8;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  font-family: 'Kaisei Decol', 'Noto Sans JP', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  color: #e8d44d;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
   text-align: center;
+  margin: 0;
 }
 
 .sub {
-  font-size: 1.1rem;
-  color: #c8d8c0;
+  font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+  color: #f0e6c8;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  margin: 0;
 }
 
 .startBtn {
-  margin-top: 16px;
-  padding: 16px 48px;
-  font-size: 1.4rem;
-  background: #e8d44d;
-  color: #1a1a1a;
-  border-radius: 8px;
+  margin-top: 8px;
+  padding: 16px 64px;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
   font-weight: bold;
+  color: #fff;
+  background: #c8922a;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 0 #8a6010;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
 }
 
-.startBtn:hover {
-  background: #f0e060;
+.startBtn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #8a6010;
+}
+
+.settingsBtn {
+  position: absolute;
+  bottom: 2.5vmin;
+  right: 2.5vmin;
+  /* 画面サイズに追従（小さい画面では縮み、大きい画面で最大192px） */
+  width: clamp(80px, 20vmin, 192px);
+  height: clamp(80px, 20vmin, 192px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8vmin;
+  background: #243a2a;
+  border: clamp(3px, 0.7vmin, 6px) solid #8a6010;
+  border-radius: clamp(10px, 2vmin, 20px);
+  color: #f0e6c8;
+  cursor: pointer;
+}
+
+.gear {
+  font-size: clamp(2rem, 9vmin, 5rem);
+  line-height: 1;
+}
+
+.settingsLabel {
+  font-size: clamp(0.7rem, 2.4vmin, 1.4rem);
 }

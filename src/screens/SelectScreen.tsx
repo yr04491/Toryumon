@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { loadStagesIndex } from '../game/stageLoader'
+import { getSavedRank } from '../game/rankStorage'
 import type { StageIndex } from '../types/stage'
 import styles from './SelectScreen.module.css'
 
@@ -16,16 +17,22 @@ export default function SelectScreen({ onSelect }: Props) {
     <div className={styles.container}>
       <h2 className={styles.heading}>ステージを選択</h2>
       <div className={styles.list}>
-        {stages.map(stage => (
-          <button key={stage.stageId} className={styles.card} onClick={() => onSelect(stage)}>
-            <span className={styles.subject}>{subjectLabel(stage.subject)}</span>
-            <span className={styles.info}>
-              {schoolLabel(stage.school)} {stage.grade}年生
-            </span>
-            <span className={styles.stageTitle}>{stage.title}</span>
-            <span className={styles.difficulty}>難易度 {'★'.repeat(stage.difficulty)}</span>
-          </button>
-        ))}
+        {stages.map(stage => {
+          const rank = getSavedRank(stage.stageId)
+          return (
+            <button key={stage.stageId} className={styles.card} onClick={() => onSelect(stage)}>
+              {rank && (
+                <span className={styles.rankBadge} data-rank={rank}>{rank}</span>
+              )}
+              <span className={styles.subject}>{subjectLabel(stage.subject)}</span>
+              <span className={styles.info}>
+                {schoolLabel(stage.school)} {stage.grade}年生
+              </span>
+              <span className={styles.stageTitle}>{stage.title}</span>
+              <span className={styles.difficulty}>難易度 {'★'.repeat(stage.difficulty)}</span>
+            </button>
+          )
+        })}
       </div>
     </div>
   )

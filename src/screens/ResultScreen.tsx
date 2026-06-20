@@ -1,33 +1,32 @@
-import type { GameResult } from '../App'
+import type { StageResult } from '../App'
 import styles from './ResultScreen.module.css'
 
 type Props = {
-  result: GameResult
+  result: StageResult
   onRetry: () => void
   onTitle: () => void
 }
 
 export default function ResultScreen({ result, onRetry, onTitle }: Props) {
-  const { userScore, yamadaScore } = result
-  const win = userScore > yamadaScore
+  const { rank, tooManyTaps } = result
+  const cleared = rank !== '-'
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h2 className={win ? styles.winText : styles.loseText}>
-          {win ? '🎉 勝った！' : userScore === yamadaScore ? '引き分け' : '😢 負けた…'}
+        <h2 className={cleared ? styles.clearText : styles.failText}>
+          {cleared ? '🎉 クリア！' : '😢 ステージ失敗…'}
         </h2>
-        <div className={styles.scores}>
-          <div className={styles.scoreItem}>
-            <span className={styles.scoreName}>あなた</span>
-            <span className={styles.scoreNum}>{userScore}</span>
-          </div>
-          <span className={styles.vs}>vs</span>
-          <div className={styles.scoreItem}>
-            <span className={styles.scoreName}>山田くん</span>
-            <span className={styles.scoreNum}>{yamadaScore}</span>
-          </div>
+
+        <div className={styles.rankBox}>
+          <span className={styles.rankLabel}>ランク</span>
+          <span className={styles.rankValue} data-rank={rank}>{rank}</span>
         </div>
+
+        {tooManyTaps && (
+          <p className={styles.tooMany}>間違えてタップし過ぎた！</p>
+        )}
+
         <div className={styles.buttons}>
           <button className={styles.retryBtn} onClick={onRetry}>
             もう一度

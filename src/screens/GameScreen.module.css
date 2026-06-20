@@ -14,7 +14,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #2a2a3a;
+  background-image: url('./background.png');
+  background-size: cover;
+  background-position: center;
   overflow: hidden;
 }
 
@@ -34,12 +36,35 @@
   font-weight: bold;
 }
 
-.gameArea {
-  flex: 1;
+.progress {
+  color: #e8d44d;
+  font-weight: bold;
+}
+
+.pauseBtn {
+  margin-left: auto;
+  /* 画面サイズに追従 */
+  width: clamp(32px, 6vmin, 56px);
+  height: clamp(32px, 6vmin, 56px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 22% 16px 16px;
+  font-size: clamp(0.9rem, 3.2vmin, 1.6rem);
+  background: #243a2a;
+  border: 2px solid #8a6010;
+  border-radius: 8px;
+  color: #f0e6c8;
+  flex-shrink: 0;
+}
+
+.gameArea {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* 下端を茶色の境界(画面高さの72.3%)に合わせる＝下に茶色分(27.7vh)の余白 */
+  padding: 12px 16px 27.7vh 16px;
+  min-height: 0;
 }
 
 /* 黒板・先生・山田くんのサイズ基準となるコンテナ */
@@ -47,14 +72,14 @@
   position: relative;
   display: inline-flex;
   align-items: flex-end;
-  max-width: 860px;
-  width: 100%;
 }
 
 .blackboardWrap {
   position: relative;
-  flex: 1;
   aspect-ratio: 16 / 9;
+  /* 1290px(=従来860の1.5倍)・横幅・画面高さ の最小値。縦にも横にもはみ出さない。
+     先生(85%)・山田くん(60%)はこの黒板基準の%なので、サイズ・位置ごと自動で揃う */
+  width: min(1290px, 68vw, (72vh - 70px) * 16 / 9);
 }
 
 .blackboardBg {
@@ -73,11 +98,11 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 12px;
+  gap: clamp(8px, 2vh, 20px);
 }
 
 .boardItem {
-  font-size: clamp(0.7rem, 1.8vw, 1.5rem);
+  font-size: clamp(1rem, 2.7vw, 2.2rem);
   color: #e8ffe0;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
   cursor: pointer;
@@ -107,9 +132,10 @@
 
 .teacherWrap {
   position: absolute;
-  bottom: 0;
-  right: 6%;
-  height: 85%;
+  /* 足元を画面下に合わせる(黒板下端→画面下=茶色ぶん27.7vh)。height=大きさ */
+  bottom: -27.7vh;
+  right: 2%;
+  height: 139%;
 }
 
 .teacherImg {
@@ -121,8 +147,9 @@
 .yamadaWrap {
   position: absolute;
   left: 100%;
-  bottom: 0;
-  height: 60%;
+  /* 足元を画面下に合わせる(黒板下端→画面下=茶色ぶん27.7vh)。height=大きさ */
+  bottom: -27.7vh;
+  height: 106%;
   display: flex;
   align-items: flex-end;
 }

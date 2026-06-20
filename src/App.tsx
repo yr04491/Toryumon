@@ -3,19 +3,20 @@ import TitleScreen from './screens/TitleScreen'
 import SelectScreen from './screens/SelectScreen'
 import GameScreen from './screens/GameScreen'
 import ResultScreen from './screens/ResultScreen'
-import type { StageIndex } from './types/stage'
+import { saveRank } from './game/rankStorage'
+import type { StageIndex, Rank } from './types/stage'
 
 export type Screen = 'title' | 'select' | 'game' | 'result'
 
-export type GameResult = {
-  userScore: number
-  yamadaScore: number
+export type StageResult = {
+  rank: Rank
+  tooManyTaps: boolean
 }
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('title')
   const [selectedStage, setSelectedStage] = useState<StageIndex | null>(null)
-  const [gameResult, setGameResult] = useState<GameResult>({ userScore: 0, yamadaScore: 0 })
+  const [stageResult, setStageResult] = useState<StageResult>({ rank: '-', tooManyTaps: false })
 
   const goToSelect = () => setScreen('select')
 
@@ -24,8 +25,9 @@ export default function App() {
     setScreen('game')
   }
 
-  const goToResult = (result: GameResult) => {
-    setGameResult(result)
+  const goToResult = (result: StageResult) => {
+    setStageResult(result)
+    if (selectedStage) saveRank(selectedStage.stageId, result.rank)
     setScreen('result')
   }
 
@@ -39,7 +41,7 @@ export default function App() {
         <GameScreen stage={selectedStage} onFinish={goToResult} />
       )}
       {screen === 'result' && (
-        <ResultScreen result={gameResult} onRetry={goToSelect} onTitle={goToTitle} />
+        <ResultScreen result={stageResult} onRetry={goToSelect} onTitle={goToTitle} />
       )}
     </>
   )

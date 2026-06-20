@@ -15,47 +15,48 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   min-width: 360px;
 }
 
-.winText {
+.clearText {
   font-size: 2rem;
   color: #e8d44d;
 }
 
-.loseText {
+.failText {
   font-size: 2rem;
   color: #d08080;
 }
 
-.scores {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.scoreItem {
+.rankBox {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
 }
 
-.scoreName {
+.rankLabel {
   font-size: 1rem;
   color: #a0c0a0;
 }
 
-.scoreNum {
-  font-size: 3rem;
+.rankValue {
+  font-size: 5rem;
   font-weight: bold;
-  color: #f0e6c8;
+  line-height: 1;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
 }
 
-.vs {
-  font-size: 1.4rem;
-  color: #808080;
+.rankValue[data-rank='A'] { color: #ffd700; }
+.rankValue[data-rank='B'] { color: #c0c0c0; }
+.rankValue[data-rank='C'] { color: #cd7f32; }
+.rankValue[data-rank='-'] { color: #888888; }
+
+.tooMany {
+  font-size: 1.1rem;
+  color: #e0a030;
+  font-weight: bold;
 }
 
 .buttons {
