@@ -278,7 +278,10 @@ export default function GameScreen({ stage, onFinish }: Props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{ backgroundImage: `url(${import.meta.env.BASE_URL}background.png)` }}
+    >
       <header className={styles.header}>
         <span>{stage.subject === 'math' ? '算数' : stage.subject}</span>
         <span>小学{stage.grade}年生</span>

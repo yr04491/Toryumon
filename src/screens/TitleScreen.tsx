@@ -19,7 +19,10 @@ export default function TitleScreen({ onStart }: Props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{ backgroundImage: `url(${import.meta.env.BASE_URL}blackboard.png)` }}
+    >
       <h1 className={styles.title}>先生の間違いを見つけろ！</h1>
       <p className={styles.sub}>授業中の板書ミスを見逃すな</p>
       <button className={styles.startBtn} onClick={handleStart}>

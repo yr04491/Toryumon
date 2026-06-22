@@ -14,7 +14,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-image: url('./background.png');
+  /* background-image はJSX側で import.meta.env.BASE_URL を使い指定（本番のパス解決対策） */
   background-size: cover;
   background-position: center;
   overflow: hidden;
