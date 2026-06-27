@@ -16,7 +16,8 @@
   flex-direction: column;
   /* background-image はJSX側で import.meta.env.BASE_URL を使い指定（本番のパス解決対策） */
   background-size: cover;
-  background-position: center;
+  /* 上揃え：画面が横長で背が低いと下の茶色(床)から見切れる（壁は常に残す） */
+  background-position: top center;
   overflow: hidden;
 }
 
@@ -76,6 +77,8 @@
 
 .blackboardWrap {
   position: relative;
+  /* 板書の文字・行間を黒板サイズ基準(cqw)で伸縮させるためのコンテナ */
+  container-type: size;
   aspect-ratio: 16 / 9;
   /* 1290px(=従来860の1.5倍)・横幅・画面高さ の最小値。縦にも横にもはみ出さない。
      先生(85%)・山田くん(60%)はこの黒板基準の%なので、サイズ・位置ごと自動で揃う */
@@ -98,11 +101,13 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: clamp(8px, 2vh, 20px);
+  /* 黒板幅基準で行間も伸縮 */
+  gap: clamp(6px, 1.7cqw, 20px);
 }
 
 .boardItem {
-  font-size: clamp(1rem, 2.7vw, 2.2rem);
+  /* vw(画面幅)ではなく cqw(黒板幅)基準。黒板の拡縮に文字が比例＝はみ出さない */
+  font-size: clamp(0.85rem, 2.7cqw, 2.2rem);
   color: #e8ffe0;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
   cursor: pointer;
@@ -418,4 +423,18 @@
   color: #1a1a1a;
   border-radius: 8px;
   font-weight: bold;
+}
+
+/* 背の低い横長画面(スマホ横など)：黒板を中心に拡大表示。
+   床の茶色とキャラの足は画面外に見切れてよい（黒板を見やすく優先）。
+   キャラの bottom:-27.7vh はそのままなので、床余白を詰めるだけで足が下に切れる。 */
+@media (max-height: 500px) {
+  .gameArea {
+    padding-bottom: 12px;
+  }
+
+  .blackboardWrap {
+    /* 通常の (72vh-70px) より大きい (90vh-70px) 基準。小さい画面ほど黒板が相対的に大きく見える */
+    width: min(1290px, 88vw, calc((90vh - 70px) * 16 / 9));
+  }
 }
